@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto · 🍄 MicoMadrid</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #333;
+            background: #f7f5ef;
+        }
+        h1 { color: #6b4b2a; margin-bottom: 8px; }
+        h2 { color: #6b4b2a; margin-top: 0; }
+
+        header {
+            border-bottom: 2px solid #e0d6c3;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+        nav a {
+            color: #6b4b2a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        nav a:hover { text-decoration: underline; }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .aviso {
+            font-size: 0.85em;
+            color: #888;
+            text-align: center;
+            margin-top: 30px;
+        }
+        footer {
+            border-top: 1px solid #e0d6c3;
+            padding-top: 16px;
+            margin-top: 40px;
+        }
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 500;
+            color: #6b4b2a;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #d8cdbb;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            background: #fdfcf9;
+        }
+        textarea { min-height: 120px; resize: vertical; }
+        button {
+            margin-top: 16px;
+            background: #6b4b2a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        button:hover { background: #563b20; }
+        .nota {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍄 MicoMadrid</h1>
+        <nav>
+            <a href="/">Inicio</a> |
+            <a href="/sobre">Sobre</a> |
+            <a href="/contacto">Contacto</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>Contacto</h2>
+            <p>
+                ¿Sugerencias de especies, errores en los datos o ideas para mejorar
+                MicoMadrid? Escríbenos.
+            </p>
+            <form onsubmit="event.preventDefault(); alert('Formulario de demostración: aún no envía correos.');">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="email">Correo electrónico</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="mensaje">Mensaje</label>
+                <textarea id="mensaje" name="mensaje" required></textarea>
+
+                <button type="submit">Enviar</button>
+                <p class="nota">
+                    El formulario es de demostración: todavía no envía correos.
+                    Para contactar de verdad, escribe a
+                    <strong>hola@micomadrid.example</strong>.
+                </p>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Otros canales</h2>
+            <p>
+                Si prefieres, puedes abrir una incidencia en el repositorio del proyecto
+                o escribir directamente al correo indicado arriba.
+            </p>
+        </div>
+    </main>
+
+    <footer class="aviso">
+        © 2026 MicoMadrid — Datos orientativos. No garantizan encontrar setas. Respeta el monte y las normas de recolección.
+    </footer>
+
+</body>
+</html>

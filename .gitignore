@@ -1,0 +1,25 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Variables de entorno (contiene la API Key)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Scripts locales
+run.bat
