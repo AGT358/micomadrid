@@ -3,9 +3,10 @@ import time
 from datetime import date, timedelta
 
 import requests
-from dotenv import load_dotenv
-from flask import Flask, render_template
 from pathlib import Path
+from dotenv import load_dotenv
+from flask import Flask, render_template, redirect, url_for
+
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 
@@ -286,7 +287,11 @@ def sobre():
 def contacto():
     return render_template("contacto.html")
 
-
+@app.route("/recargar")
+def recargar():
+    """Vacía la caché y vuelve al inicio con datos frescos."""
+    _cache.clear()
+    return redirect(url_for("inicio"))
 
 
 if __name__ == "__main__":

@@ -190,6 +190,53 @@
             padding-top: 16px;
             margin-top: 40px;
         }
+
+        .btn-recargar {
+            display: inline-block;
+            background: #6b4b2a;
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-recargar:hover {
+            background: #563b20;
+        }
+
+        .tooltip-estacion {
+            background: #6b4b2a;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.85em;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip-estacion::before {
+            border-top-color: #6b4b2a;
+        }
+
+        .ver-mapa {
+            font-size: 0.75em;
+            color: #6b4b2a;
+            text-decoration: none;
+            font-weight: normal;
+            float: right;
+            padding: 2px 6px;
+            border: 1px solid #d8cdbb;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .ver-mapa:hover {
+            background: #f0ebe0;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -205,15 +252,21 @@
     </header>
 
     <main>
+        <div style="text-align: left; margin-bottom: 12px;">
+            <a href="/recargar" class="btn-recargar">🔄 Actualizar datos</a>
+        </div>
         <p>Consulta orientativa de especies de setas según el tiempo en la Sierra de Madrid.</p>
-
         {% if error %}
         <div class="card error">{{ error }}</div>
         {% else %}
         <div id="mapa" style="height: 400px; border-radius: 10px; margin-bottom: 20px;"></div>
         {% for zona in zonas %}
         <div class="card">
-            <h2>{{ zona.estacion }} <span class="altitud">({{ zona.altitud }} m)</span></h2>
+            <h2>
+                {{ zona.estacion }} <span class="altitud">({{ zona.altitud }} m)</span>
+                <a href="#" class="ver-mapa" onclick="verEnMapa('{{ zona.estacion }}'); return false;">📍 Ver en el
+                    mapa</a>
+            </h2>
             <div class="dato">🌧️ Lluvia últimos 30 días: <strong>{{ zona.lluvia }} mm</strong></div>
             <div class="dato">🌡️ Temperatura actual: <strong>{{ zona.temp }} °C</strong></div>
 
@@ -245,6 +298,7 @@
         © 2026 MicoMadrid — Datos orientativos. No garantizan encontrar setas. Respeta el monte y las normas de
         recolección.
     </footer>
+
     <script>
         // Datos de las zonas inyectados desde Flask
         const zonas = {{ zonas| tojson }};
@@ -267,6 +321,7 @@
             return '#c62828';
         }
 
+        const marcadoresPorEstacion = {};
         zonas.forEach(z => {
             // Marcador circular coloreado
             const marcador = L.circleMarker([z.lat, z.lon], {
@@ -304,12 +359,31 @@
             } else {
                 especiesHtml = '<p style="margin: 6px 0; color: #999;">Sin especies favorables.</p>';
             }
-
+            marcadoresPorEstacion[z.estacion] = marcador;
             marcador.bindPopup(`
             <strong>${z.estacion}</strong> (${z.altitud} m)<br>
             🌧️ ${z.lluvia} mm · 🌡️ ${z.temp} °C
-            ${especiesHtml}
+            ${especiesHtml}            
         `);
+            // Tooltip al pasar el ratón
+            let mejorEspecie = '';
+            if (z.favorables && z.favorables.length > 0) {
+                const [p, nombre] = z.favorables[0];
+                mejorEspecie = ` · ${nombre} (${p.toFixed(1)}/10)`;
+            }
+            marcador.bindTooltip(
+                `${z.estacion}${mejorEspecie}`,
+                { direction: 'top', offset: [0, -10], className: 'tooltip-estacion' }
+            );
+            // Abre el popup de una estación y hace scroll al mapa
+            function verEnMapa(nombreEstacion) {
+                const marcador = marcadoresPorEstacion[nombreEstacion];
+                if (!marcador) return;
+                document.getElementById('mapa').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => {
+                    marcador.openPopup();
+                }, 400);  // espera a que termine el scroll suave
+            }
         });
     </script>
 </body>
