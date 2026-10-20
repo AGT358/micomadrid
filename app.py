@@ -211,9 +211,16 @@ def obtener_datos_por_estacion():
     if not resultados:
         raise RuntimeError("Ninguna estación devolvió datos")
 
+    # Ordenar zonas por su mejor puntaje (descendente); las que no tienen
+    # especies favorables van al final
+    def _mejor_puntaje(z):
+        return z["favorables"][0][0] if z["favorables"] else -1
+
+    resultados.sort(key=_mejor_puntaje, reverse=True)
+
     cache_set(clave, resultados)
     return resultados
-
+    
 
 # ---------------------------------------------------------------------------
 # Baremo
