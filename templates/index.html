@@ -237,6 +237,16 @@
             background: #f0ebe0;
             text-decoration: none;
         }
+
+        .especie-nombre a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .especie-nombre a:hover {
+            color: #6b4b2a;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -272,15 +282,17 @@
 
             <h3>Especies favorables</h3>
             {% if zona.favorables %}
-            {% for puntaje, nombre in zona.favorables %}
+            {% for puntaje, nombre, id in zona.favorables %}
             <div class="especie">
-                <div class="especie-nombre">{{ nombre }}</div>
+                <div class="especie-nombre" title="{{ nombre }}">
+                    <a href="/especie/{{ id }}">{{ nombre }}</a>
+                </div>
                 <div class="barra-contenedor">
                     <div class="barra
-                {% if puntaje >= 7.5 %}barra-verde
-                {% elif puntaje >= 5.0 %}barra-amarilla
-                {% elif puntaje >= 2.5 %}barra-naranja
-                {% else %}barra-roja{% endif %}" style="width: {{ '%.0f'|format(puntaje * 10) }}%;">
+            {% if puntaje >= 7.5 %}barra-verde
+            {% elif puntaje >= 5.0 %}barra-amarilla
+            {% elif puntaje >= 2.5 %}barra-naranja
+            {% else %}barra-roja{% endif %}" style="width: {{ '%.0f'|format(puntaje * 10) }}%;">
                     </div>
                 </div>
                 <div class="puntaje">{{ "%.1f"|format(puntaje) }} / 10</div>

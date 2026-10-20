@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ especie.nombre }} · 🍄 MicoMadrid</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #333;
+            background: #f7f5ef;
+        }
+        h1 { color: #6b4b2a; margin-bottom: 4px; }
+        header {
+            border-bottom: 2px solid #e0d6c3;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+        nav a {
+            color: #6b4b2a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        nav a:hover { text-decoration: underline; }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        .cientifico {
+            font-style: italic;
+            color: #888;
+            margin-bottom: 16px;
+        }
+        .foto {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .campo {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .campo:last-child { border-bottom: none; }
+        .campo-etiqueta {
+            font-weight: bold;
+            color: #6b4b2a;
+            min-width: 140px;
+        }
+        .aviso {
+            font-size: 0.85em;
+            color: #888;
+            text-align: center;
+            margin-top: 30px;
+        }
+        footer {
+            border-top: 1px solid #e0d6c3;
+            padding-top: 16px;
+            margin-top: 40px;
+        }
+        .volver {
+            display: inline-block;
+            margin-top: 16px;
+            color: #6b4b2a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .volver:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍄 MicoMadrid</h1>
+        <nav>
+            <a href="/">Inicio</a> |
+            <a href="/sobre">Sobre</a> |
+            <a href="/contacto">Contacto</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="card">
+            <h1>{{ especie.nombre }}</h1>
+            <p class="cientifico">{{ especie.cientifico }}</p>
+            <img src="{{ especie.foto }}" alt="{{ especie.nombre }}" class="foto">
+
+            <div class="campo">
+                <span class="campo-etiqueta">Descripción</span>
+                <span>{{ especie.descripcion }}</span>
+            </div>
+            <div class="campo">
+                <span class="campo-etiqueta">Hábitat</span>
+                <span>{{ especie.habitat }}</span>
+            </div>
+            <div class="campo">
+                <span class="campo-etiqueta">Temporada</span>
+                <span>{{ especie.meses_optimos|join(', ') }} (óptima) · {{ especie.meses_limite|join(', ') }} (límite)</span>
+            </div>
+            <div class="campo">
+                <span class="campo-etiqueta">Altitud típica</span>
+                <span>{{ especie.altitud_tipica }}</span>
+            </div>
+            <div class="campo">
+                <span class="campo-etiqueta">Comestibilidad</span>
+                <span>{{ especie.comestible }}</span>
+            </div>
+        </div>
+
+        <a href="/" class="volver">← Volver al inicio</a>
+    </main>
+
+    <footer class="aviso">
+        © 2026 MicoMadrid — Datos orientativos. No garantizan encontrar setas. Respeta el monte y las normas de recolección.
+    </footer>
+
+</body>
+</html>

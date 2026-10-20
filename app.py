@@ -5,7 +5,7 @@ from datetime import date, timedelta
 import requests
 from pathlib import Path
 from dotenv import load_dotenv
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, abort
 
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
@@ -70,39 +70,102 @@ def cache_set(clave, valor):
 # ---------------------------------------------------------------------------
 ESPECIES = [
     {
+        "id": "boletus-edulis",
         "nombre": "Boletus edulis (Calabaza)",
+        "cientifico": "Boletus edulis",
         "lluvia_ideal": 160, "lluvia_tol": 280,
         "temp_ideal": 15,    "temp_tol": 15,
         "meses_optimos": [9, 10, 11],
         "meses_limite": [8, 12],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Gemeine_Steinpilz_(Boletus_edulis).JPG",
+        "descripcion": "Seta de sombrero pardo y pie robusto con retículo blanco. Carne blanca que no azulea al corte. Una de las más apreciadas en cocina.",
+        "habitat": "Pinares, robledales y hayedos, en suelos ácidos. Desde finales de verano hasta final del otoño.",
+        "comestible": "Excelente comestible. Única confusión posible con Tylopilus felleus (amargo, no tóxico).",
+        "altitud_tipica": "800 – 1.800 m",
     },
     {
-        "nombre": "Lactarius deliciosus (Níscalo)",
+        "id": "boletus-pinophilus",
+        "nombre": "Boletus pinophilus (Hongo de pino)",
+        "cientifico": "Boletus pinophilus",
+        "lluvia_ideal": 160, "lluvia_tol": 280,
+        "temp_ideal": 15,    "temp_tol": 15,
+        "meses_optimos": [9, 10, 11],
+        "meses_limite": [8, 12],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Boletus_pinophilus3.JPG",
+        "descripcion": "Muy similar al Boletus edulis, pero con sombrero granate-rojizo uniforme y pie más rechoncho. Carne blanca, firme.",
+        "habitat": "Exclusivo de pinares, tanto de pino silvestre como de pino negro. Otoño.",
+        "comestible": "Excelente comestible, al nivel del Boletus edulis.",
+        "altitud_tipica": "1.000 – 2.000 m",
+    },
+    {
+        "id": "pleurotus-eryngii",
+        "nombre": "Seta de Cardo",
+        "cientifico": "Pleurotus eryngii",
+        "lluvia_ideal": 80,  "lluvia_tol": 150,
+        "temp_ideal": 16,    "temp_tol": 14,
+        "meses_optimos": [10, 11],
+        "meses_limite": [9, 12, 3, 4],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Seta_de_cardo_(Pleurotus_eryngii),_2012-10-03,_DD_01.JPG",
+        "descripcion": "Seta de sombrero convexo y pie corto y grueso, que crece sobre las raíces del cardo corredor (Eryngium campestre).",
+        "habitat": "Zonas secas y soleadas con cardos. Otoño y principios de primavera.",
+        "comestible": "Excelente comestible, muy apreciada. Sin confusiones peligrosas si se respeta el hábitat sobre cardo.",
+        "altitud_tipica": "500 – 1.500 m",
+    },
+    {
+        "id": "lactarius-deliciosus",
+        "nombre": "Níscalo",
+        "cientifico": "Lactarius deliciosus",
         "lluvia_ideal": 120, "lluvia_tol": 240,
         "temp_ideal": 12,    "temp_tol": 12,
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 1],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Lactarius-deliciosus-Finland.jpg",
+        "descripcion": "Seta anaranjada que exuda látex del mismo color al cortarla. La carne se oxida a verde con el roce. Pie hueco.",
+        "habitat": "Exclusivo de pinares, en simbiosis con las raíces de los pinos. Otoño.",
+        "comestible": "Excelente comestible. No confundir con otras especies de Lactarius de sabor picante o amargo.",
+        "altitud_tipica": "800 – 2.000 m",
     },
     {
-        "nombre": "Macrolepiota procera (Parasol)",
-        "lluvia_ideal": 140, "lluvia_tol": 260,
-        "temp_ideal": 18,    "temp_tol": 14,
-        "meses_optimos": [9, 10],
-        "meses_limite": [8, 11],
+        "id": "marasmius-oreades",
+        "nombre": "Senderuela",
+        "cientifico": "Marasmius oreades",
+        "lluvia_ideal": 100, "lluvia_tol": 180,
+        "temp_ideal": 15,    "temp_tol": 15,
+        "meses_optimos": [4, 5, 6, 9, 10],
+        "meses_limite": [3, 7, 8, 11],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Marasmius_oreades_(33107040323).jpg",
+        "descripcion": "Seta pequeña de sombrero acampanado y pie fibroso, que crece formando corros o hileras en la hierba.",
+        "habitat": "Praderas, prados y bordes de caminos. Primavera y otoño.",
+        "comestible": "Comestible tras cocinado (en crudo contiene ácido cianhídrico). Solo se aprovechan los sombreros; el pie es duro. Cuidado con confundirla con Clitocybe tóxicas.",
+        "altitud_tipica": "600 – 1.800 m",
     },
     {
+        "id": "amanita-caesarea",
         "nombre": "Amanita caesarea (Oronja)",
+        "cientifico": "Amanita caesarea",
         "lluvia_ideal": 180, "lluvia_tol": 280,
         "temp_ideal": 20,    "temp_tol": 12,
         "meses_optimos": [9, 10],
         "meses_limite": [8, 11],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Amanita_caesarea.JPG",
+        "descripcion": "Seta de sombrero anaranjado intenso, láminas amarillas y pie con anillo. Cuando nace está envuelta en un huevo blanco.",
+        "habitat": "Bosques de frondosas (robledales, castañares), en suelos cálidos. Finales de verano y otoño.",
+        "comestible": "Excelente comestible, pero requiere experiencia: puede confundirse con otras amanitas. No consumir sin identificación segura.",
+        "altitud_tipica": "500 – 1.500 m",
     },
     {
-        "nombre": "Cantharellus cibarius (Rebozuelo)",
-        "lluvia_ideal": 200, "lluvia_tol": 320,
-        "temp_ideal": 17,    "temp_tol": 14,
-        "meses_optimos": [9, 10, 11],
-        "meses_limite": [8, 12],
+        "id": "calocybe-gambosa",
+        "nombre": "Perrochico (Calocybe gambosa)",
+        "cientifico": "Calocybe gambosa",
+        "lluvia_ideal": 100, "lluvia_tol": 180,
+        "temp_ideal": 14,    "temp_tol": 12,
+        "meses_optimos": [4, 5],
+        "meses_limite": [3, 6],
+        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Calocybe_gambosa_1.jpg",
+        "descripcion": "Seta primaveral de sombrero blanquecino y pie robusto, con un característico olor a harina fresca.",
+        "habitat": "Prados, pastizales y linderos, formando corros o hileras. Primavera.",
+        "comestible": "Excelente comestible. Cuidado con confundirla con Entoloma sinuatum (tóxica, otoñal, láminas rosadas).",
+        "altitud_tipica": "Cotas bajas – 2.000 m",
     },
 ]
 
@@ -261,7 +324,7 @@ def puntuar_especies(lluvia, temp, mes=None):
     for e in ESPECIES:
         p = puntuar(e, lluvia, temp, mes)
         if p > 0:
-            resultado.append((p, e["nombre"]))
+            resultado.append((p, e["nombre"], e["id"]))
     return sorted(resultado, key=lambda x: x[0], reverse=True)
 
 
@@ -292,6 +355,13 @@ def recargar():
     """Vacía la caché y vuelve al inicio con datos frescos."""
     _cache.clear()
     return redirect(url_for("inicio"))
+
+@app.route("/especie/<slug>")
+def especie(slug):
+    for e in ESPECIES:
+        if e["id"] == slug:
+            return render_template("especie.html", especie=e)
+    abort(404)
 
 
 if __name__ == "__main__":
