@@ -2,10 +2,13 @@ import os
 import time
 from datetime import date, timedelta
 
-import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+import requests
+
 from dotenv import load_dotenv
-from flask import Flask, render_template, redirect, url_for, abort
+from flask import Flask, render_template, redirect, url_for, abort, request
+
 
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
@@ -21,14 +24,90 @@ if not AEMET_KEY:
 
 BASE = "https://opendata.aemet.es/opendata/api"
 
-# Estaciones de la Sierra de Madrid (altitud >= 1000 m)
-ESTACIONES = [
-    {"id": "2462",  "nombre": "Puerto de Navacerrada", "altitud": 1892},
-    {"id": "3266A", "nombre": "Puerto Alto del León",  "altitud": 1530},
-    {"id": "3111D", "nombre": "Somosierra",            "altitud": 1454},
-    {"id": "3104Y", "nombre": "Rascafría",             "altitud": 1159},
-    {"id": "3110C", "nombre": "Buitrago del Lozoya",   "altitud": 1030},
-]
+def _dms_a_decimal(dms):
+    """Convierte '405129N' o '0040642W' a decimal. Devuelve None si falla."""
+    if not dms or len(dms) < 7:
+        return None
+    try:
+        grados = int(dms[0:2])
+        minutos = int(dms[2:4])
+        segundos = int(dms[4:6])
+        hemisferio = dms[-1].upper()
+        decimal = grados + minutos / 60 + segundos / 3600
+        if hemisferio in ("S", "W"):
+            decimal = -decimal
+        return round(decimal, 5)
+    except (ValueError, IndexError):
+        return None
+
+import time
+
+def _aemet_get(url):
+    headers = {"api_key": AEMET_KEY, "Accept": "application/json"}
+    r = requests.get(url, headers=headers, timeout=15)
+    r.raise_for_status()
+    return r.json()
+
+
+def _aemet_datos(url_primera_llamada):
+    meta = _aemet_get(url_primera_llamada)
+    if meta.get("estado") != 200 or "datos" not in meta:
+        raise RuntimeError(f"AEMET respondió: {meta.get('descripcion', meta)}")
+    r = requests.get(meta["datos"], timeout=15)
+    r.raise_for_status()
+    return r.json()
+
+def _cargar_estaciones(provincias=("MADRID", "SEGOVIA", "AVILA"), altitud_min=800):
+    """Consulta el inventario de AEMET y devuelve la lista filtrada."""
+    try:
+        url = f"{BASE}/valores/climatologicos/inventarioestaciones/todasestaciones"
+        inventario = _aemet_datos(url)
+    except Exception as exc:
+        print(f"⚠️  No se pudo cargar el inventario de estaciones: {exc}")
+        return []
+
+    resultado = []
+    for e in inventario:
+        prov = e.get("provincia", "").upper().strip()
+        try:
+            alt = float(e.get("altitud", 0))
+        except (ValueError, TypeError):
+            continue
+        if prov not in provincias or alt <= altitud_min:
+            continue
+
+        lat = _dms_a_decimal(e.get("latitud"))
+        lon = _dms_a_decimal(e.get("longitud"))
+        if lat is None or lon is None:
+            continue
+
+        resultado.append({
+            "id": e["indicativo"],
+            "nombre": e["nombre"].title(),
+            "altitud": int(alt),
+            "lat": lat,
+            "lon": lon,
+            "provincia": prov.title(),
+        })
+
+    # Ordenar por altitud descendente (las más altas primero)
+    resultado.sort(key=lambda x: x["altitud"], reverse=True)
+    print(f"✅ Cargadas {len(resultado)} estaciones de Madrid, Segovia y Ávila (> {altitud_min} m)")
+    resutlado = resultado[:15]  # Limitar a las 10 más altas
+    return resultado
+
+
+
+ESTACIONES = _cargar_estaciones()
+
+# # Estaciones de la Sierra de Madrid (altitud >= 1000 m)
+# ESTACIONES = [
+#     {"id": "2462",  "nombre": "Puerto de Navacerrada", "altitud": 1892},
+#     {"id": "3266A", "nombre": "Puerto Alto del León",  "altitud": 1530},
+#     {"id": "3111D", "nombre": "Somosierra",            "altitud": 1454},
+#     {"id": "3104Y", "nombre": "Rascafría",             "altitud": 1159},
+#     {"id": "3110C", "nombre": "Buitrago del Lozoya",   "altitud": 1030},
+# ]
 
 # ---------------------------------------------------------------------------
 # Configuración AEMET
@@ -37,16 +116,16 @@ AEMET_KEY = os.environ.get("AEMET_KEY", "")
 if not AEMET_KEY:
     print("⚠️  AEMET_KEY no definida. Crea un .env con AEMET_KEY=tu_clave")
 
-BASE = "https://opendata.aemet.es/opendata/api"
+# BASE = "https://opendata.aemet.es/opendata/api"
 
 # Estaciones de la Sierra de Madrid (altitud >= 1000 m)
-ESTACIONES = [
-    {"id": "2462",  "nombre": "Puerto de Navacerrada", "altitud": 1892, "lat": 40.7808, "lon": -4.0103},
-    {"id": "3266A", "nombre": "Puerto Alto del León",  "altitud": 1530, "lat": 40.6583, "lon": -4.1167},
-    {"id": "3111D", "nombre": "Somosierra",            "altitud": 1454, "lat": 41.1333, "lon": -3.5833},
-    {"id": "3104Y", "nombre": "Rascafría",             "altitud": 1159, "lat": 40.9000, "lon": -3.8833},
-    {"id": "3110C", "nombre": "Buitrago del Lozoya",   "altitud": 1030, "lat": 40.9833, "lon": -3.6333},
-]
+# ESTACIONES = [
+#     {"id": "2462",  "nombre": "Puerto de Navacerrada", "altitud": 1892, "lat": 40.7808, "lon": -4.0103},
+#     {"id": "3266A", "nombre": "Puerto Alto del León",  "altitud": 1530, "lat": 40.6583, "lon": -4.1167},
+#     {"id": "3111D", "nombre": "Somosierra",            "altitud": 1454, "lat": 41.1333, "lon": -3.5833},
+#     {"id": "3104Y", "nombre": "Rascafría",             "altitud": 1159, "lat": 40.9000, "lon": -3.8833},
+#     {"id": "3110C", "nombre": "Buitrago del Lozoya",   "altitud": 1030, "lat": 40.9833, "lon": -3.6333},
+# ]
 
 # ---------------------------------------------------------------------------
 # Caché simple en memoria (TTL 30 min)
@@ -173,20 +252,7 @@ ESPECIES = [
 # ---------------------------------------------------------------------------
 # Cliente AEMET (petición en dos pasos)
 # ---------------------------------------------------------------------------
-def _aemet_get(url):
-    headers = {"api_key": AEMET_KEY, "Accept": "application/json"}
-    r = requests.get(url, headers=headers, timeout=15)
-    r.raise_for_status()
-    return r.json()
 
-
-def _aemet_datos(url_primera_llamada):
-    meta = _aemet_get(url_primera_llamada)
-    if meta.get("estado") != 200 or "datos" not in meta:
-        raise RuntimeError(f"AEMET respondió: {meta.get('descripcion', meta)}")
-    r = requests.get(meta["datos"], timeout=15)
-    r.raise_for_status()
-    return r.json()
 
 
 
@@ -239,52 +305,59 @@ def _meteo_una_estacion(estacion_id):
                 continue
 
         return (lluvia, temp)
-    except Exception:
+    except Exception as exc:
+        print(f"[ERROR] {estacion_id}: {type(exc).__name__}: {exc}") #AGT
         return None
 
 
-def obtener_datos_por_estacion():
-    """
-    Devuelve lista de dicts:
-      [{"estacion": nombre, "altitud": m, "lluvia": mm, "temp": °C,
-        "favorables": [(puntaje, nombre), ...]}, ...]
-    Omite estaciones que fallen.
-    """
-    clave = "meteo:por_estacion"
+def obtener_datos_por_estacion(provincia=None):
+    clave = f"meteo:por_estacion:{provincia or 'todas'}"
     cacheado = cache_get(clave)
     if cacheado is not None:
         return cacheado
 
+    print(f"[FILTRO] provincia = {provincia!r}")
+
+    estaciones_filtradas = [
+        est for est in ESTACIONES
+        if provincia is None or est["provincia"].upper() == provincia.upper()
+    ]
+    print(f"[FILTRO] estaciones a consultar: {len(estaciones_filtradas)}")
+
     resultados = []
-    for est in ESTACIONES:
-        datos = _meteo_una_estacion(est["id"])
-        if datos is None:
-            continue
-        lluvia, temp = datos
-        favorables = puntuar_especies(lluvia, temp)
-        resultados.append({
-            "estacion": est["nombre"],
-            "altitud": est["altitud"],
-            "lat": est["lat"],
-            "lon": est["lon"],
-            "lluvia": round(lluvia, 1),
-            "temp": round(temp, 1),
-            "favorables": favorables,
-        })
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futuros = {
+            executor.submit(_meteo_una_estacion, est["id"]): est
+            for est in estaciones_filtradas
+        }
+        for futuro in as_completed(futuros):
+            est = futuros[futuro]
+            datos = futuro.result()
+            if datos is None:
+                print(f"[FALLO] {est['nombre']}")
+                continue
+            lluvia, temp = datos
+            resultados.append({
+                "estacion": est["nombre"],
+                "altitud": est["altitud"],
+                "lat": est["lat"],
+                "lon": est["lon"],
+                "provincia": est["provincia"],
+                "lluvia": round(lluvia, 1),
+                "temp": round(temp, 1),
+                "favorables": puntuar_especies(lluvia, temp),
+            })
 
     if not resultados:
-        raise RuntimeError("Ninguna estación devolvió datos")
+        raise RuntimeError(f"Ninguna estación devolvió datos (provincia: {provincia or 'todas'})")
 
-    # Ordenar zonas por su mejor puntaje (descendente); las que no tienen
-    # especies favorables van al final
     def _mejor_puntaje(z):
         return z["favorables"][0][0] if z["favorables"] else -1
 
     resultados.sort(key=_mejor_puntaje, reverse=True)
-
     cache_set(clave, resultados)
     return resultados
-    
 
 # ---------------------------------------------------------------------------
 # Baremo
@@ -327,18 +400,50 @@ def puntuar_especies(lluvia, temp, mes=None):
             resultado.append((p, e["nombre"], e["id"]))
     return sorted(resultado, key=lambda x: x[0], reverse=True)
 
+def calcular_resumen(zonas):
+    """Devuelve dict con la mejor zona y la mejor especie global."""
+    mejor = None  # (puntaje, especie, zona)
+    for z in zonas:
+        for puntaje, nombre, _id in z["favorables"]:
+            if mejor is None or puntaje > mejor[0]:
+                mejor = (puntaje, nombre, z)
+
+    if mejor is None:
+        return None
+
+    puntaje, especie, zona = mejor
+    return {
+        "especie": especie,
+        "puntaje": puntaje,
+        "estacion": zona["estacion"],
+        "altitud": zona["altitud"],
+    }
+
 
 # ---------------------------------------------------------------------------
 # Rutas
 # ---------------------------------------------------------------------------
 @app.route("/")
 def inicio():
+    provincia = request.args.get("provincia")
     try:
-        zonas = obtener_datos_por_estacion()
+        zonas = obtener_datos_por_estacion(provincia)
     except Exception as exc:
-        return render_template("index.html", error=f"No se pudo obtener el tiempo: {exc}")
+        return render_template(
+            "index.html",
+            error=f"No se pudo obtener el tiempo: {exc}",
+            zonas=[],
+            resumen=None,
+            provincia=provincia,
+        )
 
-    return render_template("index.html", zonas=zonas)
+    resumen = calcular_resumen(zonas)
+    return render_template(
+        "index.html",
+        zonas=zonas,
+        resumen=resumen,
+        provincia=provincia,
+    )
 
 
 @app.route("/sobre")
