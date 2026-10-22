@@ -156,7 +156,7 @@ ESPECIES = [
         "temp_ideal": 15,    "temp_tol": 15,
         "meses_optimos": [9, 10, 11],
         "meses_limite": [8, 12],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Gemeine_Steinpilz_(Boletus_edulis).JPG",
+        "foto": "img/boletus-edulis.jpg",
         "descripcion": "Seta de sombrero pardo y pie robusto con retículo blanco. Carne blanca que no azulea al corte. Una de las más apreciadas en cocina.",
         "habitat": "Pinares, robledales y hayedos, en suelos ácidos. Desde finales de verano hasta final del otoño.",
         "comestible": "Excelente comestible. Única confusión posible con Tylopilus felleus (amargo, no tóxico).",
@@ -170,7 +170,7 @@ ESPECIES = [
         "temp_ideal": 15,    "temp_tol": 15,
         "meses_optimos": [9, 10, 11],
         "meses_limite": [8, 12],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Boletus_pinophilus3.JPG",
+        "foto": "img/boletus-pinophilus.jpg",
         "descripcion": "Muy similar al Boletus edulis, pero con sombrero granate-rojizo uniforme y pie más rechoncho. Carne blanca, firme.",
         "habitat": "Exclusivo de pinares, tanto de pino silvestre como de pino negro. Otoño.",
         "comestible": "Excelente comestible, al nivel del Boletus edulis.",
@@ -184,7 +184,7 @@ ESPECIES = [
         "temp_ideal": 16,    "temp_tol": 14,
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 3, 4],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Seta_de_cardo_(Pleurotus_eryngii),_2012-10-03,_DD_01.JPG",
+        "foto": "img/pleurotus-eryngii.jpg",
         "descripcion": "Seta de sombrero convexo y pie corto y grueso, que crece sobre las raíces del cardo corredor (Eryngium campestre).",
         "habitat": "Zonas secas y soleadas con cardos. Otoño y principios de primavera.",
         "comestible": "Excelente comestible, muy apreciada. Sin confusiones peligrosas si se respeta el hábitat sobre cardo.",
@@ -198,7 +198,7 @@ ESPECIES = [
         "temp_ideal": 12,    "temp_tol": 12,
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 1],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Lactarius-deliciosus-Finland.jpg",
+        "foto": "img/lactarius-deliciosus.jpg",
         "descripcion": "Seta anaranjada que exuda látex del mismo color al cortarla. La carne se oxida a verde con el roce. Pie hueco.",
         "habitat": "Exclusivo de pinares, en simbiosis con las raíces de los pinos. Otoño.",
         "comestible": "Excelente comestible. No confundir con otras especies de Lactarius de sabor picante o amargo.",
@@ -212,7 +212,7 @@ ESPECIES = [
         "temp_ideal": 15,    "temp_tol": 15,
         "meses_optimos": [4, 5, 6, 9, 10],
         "meses_limite": [3, 7, 8, 11],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Marasmius_oreades_(33107040323).jpg",
+        "foto": "img/marasmius-oreades.jpg",
         "descripcion": "Seta pequeña de sombrero acampanado y pie fibroso, que crece formando corros o hileras en la hierba.",
         "habitat": "Praderas, prados y bordes de caminos. Primavera y otoño.",
         "comestible": "Comestible tras cocinado (en crudo contiene ácido cianhídrico). Solo se aprovechan los sombreros; el pie es duro. Cuidado con confundirla con Clitocybe tóxicas.",
@@ -226,7 +226,7 @@ ESPECIES = [
         "temp_ideal": 20,    "temp_tol": 12,
         "meses_optimos": [9, 10],
         "meses_limite": [8, 11],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Amanita_caesarea.JPG",
+        "foto": "img/amanita-caesarea.jpg",
         "descripcion": "Seta de sombrero anaranjado intenso, láminas amarillas y pie con anillo. Cuando nace está envuelta en un huevo blanco.",
         "habitat": "Bosques de frondosas (robledales, castañares), en suelos cálidos. Finales de verano y otoño.",
         "comestible": "Excelente comestible, pero requiere experiencia: puede confundirse con otras amanitas. No consumir sin identificación segura.",
@@ -240,7 +240,7 @@ ESPECIES = [
         "temp_ideal": 14,    "temp_tol": 12,
         "meses_optimos": [4, 5],
         "meses_limite": [3, 6],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Calocybe_gambosa_1.jpg",
+        "foto": "img/calocybe-gambosa",
         "descripcion": "Seta primaveral de sombrero blanquecino y pie robusto, con un característico olor a harina fresca.",
         "habitat": "Prados, pastizales y linderos, formando corros o hileras. Primavera.",
         "comestible": "Excelente comestible. Cuidado con confundirla con Entoloma sinuatum (tóxica, otoñal, láminas rosadas).",
@@ -254,7 +254,7 @@ ESPECIES = [
         "temp_ideal": 16,    "temp_tol": 14,
         "meses_optimos": [4, 5, 9, 10],
         "meses_limite": [3, 6, 8, 11],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Agaricus_campestris_1.jpg",
+        "foto": "img/agaricus-campestris",
         "descripcion": "Seta de sombrero blanco y láminas rosadas que se vuelven pardas al madurar. Olor agradable a champiñón.",
         "habitat": "Praderas, pastizales y bordes de caminos. Primavera y otoño.",
         "comestible": "Excelente comestible. Cuidado extremo con confundirlo con Amanita phalloides o A. virosa (blancas, con anillo y volva).",
@@ -268,7 +268,7 @@ ESPECIES = [
         "temp_ideal": 15,    "temp_tol": 14,
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 4, 5],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Agrocybe_aegerita_1.jpg",
+        "foto": "img/agrocybe-aegerita.jpg",
         "descripcion": "Seta de sombrero pardo y pie largo, que crece en racimos sobre madera muerta de chopos y álamos.",
         "habitat": "Troncos y tocones de chopos, álamos y sauces, en riberas y sotos. Otoño y primavera.",
         "comestible": "Excelente comestible, muy apreciada en la zona del Duero y del sur de Europa.",
@@ -282,7 +282,7 @@ ESPECIES = [
         "temp_ideal": 14,    "temp_tol": 12,
         "meses_optimos": [3, 4, 5],
         "meses_limite": [2, 6],
-        "foto": "https://commons.wikimedia.org/wiki/Special:FilePath/Morchella_esculenta_1.jpg",
+        "foto": "img/morchella-esculenta.jpg",
         "descripcion": "Seta de sombrero con aspecto de esponja o panal de abeja, color ocre. Muy apreciada en cocina.",
         "habitat": "Bosques de ribera, encinares, pinares y zonas húmedas. Primavera.",
         "comestible": "Excelente comestible, pero tóxica en crudo: hay que cocinarla bien. Cuidado con confundirla con la colmenilla falsa (Gyromitra esculenta), muy tóxica.",
@@ -296,7 +296,7 @@ ESPECIES = [
         "temp_ideal": 14,    "temp_tol": 14,
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12],
-        "foto": "/static/img/Craterellus_cornucopioides_1.jpg",
+        "foto": "img/craterellus-cornucopioides.jpg",
         "descripcion": "Seta en forma de trompeta o embudo, de color gris negruzco. A menudo pasa desapercibida por su camuflaje con la hojarasca.",
         "habitat": "Bosques de frondosas (robledales, hayedos, castañares), en suelos húmedos. Otoño.",
         "comestible": "Excelente comestible, muy apreciada en cocina. Difícil de confundir.",
@@ -524,6 +524,9 @@ def especie(slug):
             return render_template("especie.html", especie=e)
     abort(404)
 
+@app.route("/especies")
+def especies():
+    return render_template("especies.html", especies=ESPECIES)
 
 if __name__ == "__main__":
     app.run(debug=True)
