@@ -152,8 +152,8 @@ ESPECIES = [
         "id": "boletus-edulis",
         "nombre": "Boletus edulis (Calabaza)",
         "cientifico": "Boletus edulis",
-        "lluvia_ideal": 160, "lluvia_tol": 280,
-        "temp_ideal": 15,    "temp_tol": 15,
+        "lluvia_ideal": 160, "lluvia_tol": 280,   # sin cambios: otoño húmedo
+        "temp_ideal": 15,    "temp_tol": 15,      # sin cambios
         "meses_optimos": [9, 10, 11],
         "meses_limite": [8, 12],
         "foto": "img/boletus-edulis.jpg",
@@ -166,8 +166,8 @@ ESPECIES = [
         "id": "boletus-pinophilus",
         "nombre": "Boletus pinophilus (Hongo de pino)",
         "cientifico": "Boletus pinophilus",
-        "lluvia_ideal": 160, "lluvia_tol": 280,
-        "temp_ideal": 15,    "temp_tol": 15,
+        "lluvia_ideal": 150, "lluvia_tol": 270,   # ligeramente más seco que edulis
+        "temp_ideal": 14,    "temp_tol": 14,      # prefiere algo más de frío
         "meses_optimos": [9, 10, 11],
         "meses_limite": [8, 12],
         "foto": "img/boletus-pinophilus.jpg",
@@ -180,8 +180,8 @@ ESPECIES = [
         "id": "pleurotus-eryngii",
         "nombre": "Seta de Cardo",
         "cientifico": "Pleurotus eryngii",
-        "lluvia_ideal": 80,  "lluvia_tol": 150,
-        "temp_ideal": 16,    "temp_tol": 14,
+        "lluvia_ideal": 90,  "lluvia_tol": 160,   # sube un poco: es más de secano
+        "temp_ideal": 15,    "temp_tol": 14,      # sube de 16 a 15 (más realista en otoño)
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 3, 4],
         "foto": "img/pleurotus-eryngii.jpg",
@@ -194,8 +194,8 @@ ESPECIES = [
         "id": "lactarius-deliciosus",
         "nombre": "Níscalo",
         "cientifico": "Lactarius deliciosus",
-        "lluvia_ideal": 120, "lluvia_tol": 240,
-        "temp_ideal": 12,    "temp_tol": 12,
+        "lluvia_ideal": 120, "lluvia_tol": 240,   # sin cambios
+        "temp_ideal": 12,    "temp_tol": 12,      # sin cambios
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 1],
         "foto": "img/lactarius-deliciosus.jpg",
@@ -208,8 +208,8 @@ ESPECIES = [
         "id": "marasmius-oreades",
         "nombre": "Senderuela",
         "cientifico": "Marasmius oreades",
-        "lluvia_ideal": 100, "lluvia_tol": 180,
-        "temp_ideal": 15,    "temp_tol": 15,
+        "lluvia_ideal": 110, "lluvia_tol": 200,   # sube un poco: es ubicua
+        "temp_ideal": 15,    "temp_tol": 16,      # tolera más rango de temperatura
         "meses_optimos": [4, 5, 6, 9, 10],
         "meses_limite": [3, 7, 8, 11],
         "foto": "img/marasmius-oreades.jpg",
@@ -222,8 +222,8 @@ ESPECIES = [
         "id": "amanita-caesarea",
         "nombre": "Amanita caesarea (Oronja)",
         "cientifico": "Amanita caesarea",
-        "lluvia_ideal": 180, "lluvia_tol": 280,
-        "temp_ideal": 20,    "temp_tol": 12,
+        "lluvia_ideal": 170, "lluvia_tol": 260,   # baja un poco: no es tan exigente como se creía
+        "temp_ideal": 19,    "temp_tol": 11,      # baja de 20 a 19 (más realista)
         "meses_optimos": [9, 10],
         "meses_limite": [8, 11],
         "foto": "img/amanita-caesarea.jpg",
@@ -236,25 +236,25 @@ ESPECIES = [
         "id": "calocybe-gambosa",
         "nombre": "Perrochico (Calocybe gambosa)",
         "cientifico": "Calocybe gambosa",
-        "lluvia_ideal": 100, "lluvia_tol": 180,
-        "temp_ideal": 14,    "temp_tol": 12,
+        "lluvia_ideal": 90,  "lluvia_tol": 160,   # baja: primavera más seca
+        "temp_ideal": 14,    "temp_tol": 12,      # sin cambios
         "meses_optimos": [4, 5],
         "meses_limite": [3, 6],
-        "foto": "img/calocybe-gambosa",
+        "foto": "img/calocybe-gambosa.jpg",
         "descripcion": "Seta primaveral de sombrero blanquecino y pie robusto, con un característico olor a harina fresca.",
         "habitat": "Prados, pastizales y linderos, formando corros o hileras. Primavera.",
         "comestible": "Excelente comestible. Cuidado con confundirla con Entoloma sinuatum (tóxica, otoñal, láminas rosadas).",
         "altitud_tipica": "Cotas bajas – 2.000 m",
     },
-        {
+    {
         "id": "agaricus-campestris",
         "nombre": "Champiñón silvestre",
         "cientifico": "Agaricus campestris",
-        "lluvia_ideal": 120, "lluvia_tol": 220,
-        "temp_ideal": 16,    "temp_tol": 14,
+        "lluvia_ideal": 110, "lluvia_tol": 200,   # baja: no necesita tanta lluvia
+        "temp_ideal": 16,    "temp_tol": 15,      # sube un poco la tolerancia
         "meses_optimos": [4, 5, 9, 10],
         "meses_limite": [3, 6, 8, 11],
-        "foto": "img/agaricus-campestris",
+        "foto": "img/agaricus-campestris.jpg",
         "descripcion": "Seta de sombrero blanco y láminas rosadas que se vuelven pardas al madurar. Olor agradable a champiñón.",
         "habitat": "Praderas, pastizales y bordes de caminos. Primavera y otoño.",
         "comestible": "Excelente comestible. Cuidado extremo con confundirlo con Amanita phalloides o A. virosa (blancas, con anillo y volva).",
@@ -264,8 +264,8 @@ ESPECIES = [
         "id": "agrocybe-aegerita",
         "nombre": "Seta de chopo",
         "cientifico": "Agrocybe aegerita",
-        "lluvia_ideal": 140, "lluvia_tol": 240,
-        "temp_ideal": 15,    "temp_tol": 14,
+        "lluvia_ideal": 130, "lluvia_tol": 230,   # baja un poco: crece sobre madera, no depende del suelo
+        "temp_ideal": 15,    "temp_tol": 15,
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12, 4, 5],
         "foto": "img/agrocybe-aegerita.jpg",
@@ -278,8 +278,8 @@ ESPECIES = [
         "id": "morchella-esculenta",
         "nombre": "Colmenilla",
         "cientifico": "Morchella esculenta",
-        "lluvia_ideal": 100, "lluvia_tol": 180,
-        "temp_ideal": 14,    "temp_tol": 12,
+        "lluvia_ideal": 85,  "lluvia_tol": 150,   # baja: primavera seca
+        "temp_ideal": 13,    "temp_tol": 11,      # baja: prefiere fresco
         "meses_optimos": [3, 4, 5],
         "meses_limite": [2, 6],
         "foto": "img/morchella-esculenta.jpg",
@@ -292,8 +292,8 @@ ESPECIES = [
         "id": "craterellus-cornucopioides",
         "nombre": "Trompeta de los muertos",
         "cientifico": "Craterellus cornucopioides",
-        "lluvia_ideal": 150, "lluvia_tol": 260,
-        "temp_ideal": 14,    "temp_tol": 14,
+        "lluvia_ideal": 150, "lluvia_tol": 260,   # sin cambios
+        "temp_ideal": 14,    "temp_tol": 14,      # sin cambios
         "meses_optimos": [10, 11],
         "meses_limite": [9, 12],
         "foto": "img/craterellus-cornucopioides.jpg",
