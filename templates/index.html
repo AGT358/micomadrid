@@ -282,7 +282,7 @@
 <body>
 
     <header>
-        <h1>🍄 MicoMadrid</h1>
+        <h1>🍄🍄 MicoMadrid 🍄🍄</h1>
         <nav>
             <a href="/">Inicio</a> |
             <a href="/especies">Especies</a> |
@@ -315,6 +315,7 @@
             </h2>
             <div class="dato">🌧️ Lluvia últimos 30 días: <strong>{{ zona.lluvia }} mm</strong></div>
             <div class="dato">🌡️ Temperatura actual: <strong>{{ zona.temp }} °C</strong></div>
+            <div class="dato">🌳 <strong>{{ zona.bosque }}</strong></div>
 
             <h3>Especies favorables</h3>
             {% if zona.favorables %}
@@ -442,6 +443,7 @@
             marcadoresPorEstacion[z.estacion] = marcador;
             marcador.bindPopup(`
             <strong>${z.estacion}</strong> (${z.altitud} m)<br>
+            🌳 ${z.bosque}<br>
             🌧️ ${z.lluvia} mm · 🌡️ ${z.temp} °C
             ${especiesHtml}            
         `);

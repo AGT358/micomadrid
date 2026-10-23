@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,43 +14,64 @@
             color: #333;
             background: #f7f5ef;
         }
-        h1 { color: #6b4b2a; margin-bottom: 8px; }
-        h2 { color: #6b4b2a; margin-top: 28px; }
+
+        h1 {
+            color: #6b4b2a;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            color: #6b4b2a;
+            margin-top: 28px;
+        }
 
         header {
             border-bottom: 2px solid #e0d6c3;
             padding-bottom: 12px;
             margin-bottom: 24px;
         }
+
         nav a {
             color: #6b4b2a;
             text-decoration: none;
             font-weight: 500;
         }
-        nav a:hover { text-decoration: underline; }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
 
         .card {
             background: #fff;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
+
         .aviso {
             font-size: 0.85em;
             color: #888;
             text-align: center;
             margin-top: 30px;
         }
+
         footer {
             border-top: 1px solid #e0d6c3;
             padding-top: 16px;
             margin-top: 40px;
         }
-        ul { padding-left: 20px; }
-        li { margin: 6px 0; }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 6px 0;
+        }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -67,45 +89,56 @@
             <p>
                 MicoMadrid es una herramienta <strong>orientativa</strong> que estima
                 qué especies de setas pueden encontrar mejores condiciones para fructificar
-                en la Sierra de Madrid, a partir de los datos meteorológicos recientes.
+                en la Sierra de Madrid, Segovia y Ávila, a partir de los datos meteorológicos recientes.
             </p>
         </div>
 
         <div class="card">
             <h2>Cómo funciona</h2>
             <p>
-                Consultamos las estaciones de <strong>AEMET en la Sierra de Madrid</strong>
-                (altitud ≥ 1.000 m: Navacerrada, Alto del León, Somosierra, Rascafría y
-                Buitrago del Lozoya) y promediamos sus datos:
+                Consultamos las estaciones de <strong>AEMET</strong> en Madrid, Segovia y Ávila
+                (por encima de 800 m de altitud) y obtenemos dos datos clave para cada una:
             </p>
             <ul>
-                <li>🌧️ Lluvia acumulada en los últimos 30 días (mm).</li>
-                <li>🌡️ Temperatura actual (°C).</li>
+                <li>🌧️ <strong>Lluvia acumulada en los últimos 30 días (mm).</strong></li>
+                <li>🌡️ <strong>Temperatura actual (°C).</strong></li>
             </ul>
             <p>
                 Usamos una ventana de 30 días porque la fructificación depende más de la
                 humedad profunda del suelo que de un episodio aislado de lluvia.
             </p>
+        </div>
+
+        <div class="card">
+            <h2>Cómo se calcula el puntaje</h2>
             <p>
-                Con esos datos, cada especie recibe una puntuación entre <strong>0 y 10</strong>
-                según lo cerca que estén las condiciones reales de sus condiciones ideales
-                de lluvia y temperatura, y de si estamos en su temporada típica.
-                La lluvia pesa un 65% y la temperatura un 35%.
+                Cada especie tiene unas condiciones ideales de lluvia y temperatura. Para cada estación,
+                comparamos los datos reales con esos ideales y calculamos una puntuación de <strong>0 a 10</strong>:
+            </p>
+            <ul>
+                <li>La <strong>lluvia</strong> pesa un <strong>65%</strong> en la nota final.</li>
+                <li>La <strong>temperatura</strong> pesa un <strong>35%</strong>.</li>
+                <li>Si estamos fuera de la temporada típica de la especie, la puntuación se reduce a la mitad o se
+                    anula.</li>
+            </ul>
+            <p>
+                Un puntaje alto no garantiza encontrar setas: influyen también el tipo de suelo,
+                la altitud concreta, la orientación y la presión de recolección.
             </p>
         </div>
 
         <div class="card">
-            <h2>Qué significa el puntaje</h2>
+            <h2>Qué significa el puntaje y los colores</h2>
+            <p>En las tarjetas de cada estación y en el mapa, los colores indican:</p>
             <ul>
-                <li><strong>≥ 7,5</strong>: condiciones muy favorables 🟢</li>
-                <li><strong>5,0 – 7,5</strong>: condiciones favorables 🟡</li>
-                <li><strong>2,5 – 5,0</strong>: condiciones marginales 🟠</li>
-                <li><strong>&lt; 2,5</strong>: poco probable 🔴</li>
+                <li>🟢 <strong>Verde (≥ 7,5):</strong> condiciones muy favorables.</li>
+                <li>🟡 <strong>Amarillo (5,0 – 7,4):</strong> condiciones favorables.</li>
+                <li>🟠 <strong>Naranja (2,5 – 4,9):</strong> condiciones marginales.</li>
+                <li>🔴 <strong>Rojo (&lt; 2,5):</strong> poco probable.</li>
             </ul>
             <p>
-                Un puntaje alto <em>no garantiza</em> encontrar setas: influyen también
-                el tipo de suelo, la altitud concreta, la orientación, la humedad
-                del terreno y la presión de recolección.
+                En el mapa, el color del círculo de cada estación corresponde a la <strong>mejor especie</strong>
+                que se puede encontrar en esa zona.
             </p>
         </div>
 
@@ -121,8 +154,10 @@
     </main>
 
     <footer class="aviso">
-        © 2026 MicoMadrid — Datos orientativos. No garantizan encontrar setas. Respeta el monte y las normas de recolección.
+        © 2026 MicoMadrid — Datos orientativos. No garantizan encontrar setas. Respeta el monte y las normas de
+        recolección.
     </footer>
 
 </body>
+
 </html>

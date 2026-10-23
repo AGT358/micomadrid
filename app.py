@@ -40,7 +40,6 @@ def _dms_a_decimal(dms):
     except (ValueError, IndexError):
         return None
 
-import time
 
 def _aemet_get(url):
     headers = {"api_key": AEMET_KEY, "Accept": "application/json"}
@@ -80,6 +79,25 @@ def _cargar_estaciones(provincias=("MADRID", "SEGOVIA", "AVILA"), altitud_min=80
         lon = _dms_a_decimal(e.get("longitud"))
         if lat is None or lon is None:
             continue
+        
+                # Mapeo manual de tipos de bosque por estación (según MFE / conocimiento local)
+        BOSQUES = {
+            "2462":  "Pinar de pino silvestre y praderas alpinas",
+            "3266A": "Pinar de pino silvestre y robledal",
+            "3111D": "Pinar de pino silvestre y hayedo",
+            "3104Y": "Robledal de melojo y pinares",
+            "3110C": "Encinares y robledales de melojo",
+            "3191E": "Encinares y pastizales",
+            "2150H": "Pinar de pino silvestre y praderas",
+            "2471Y": "Pinar de pino silvestre y robledal",
+            "2182C": "Pinar de pino silvestre y sabinar",
+            "2465":  "Encinares y pastizales",
+            "2444":  "Encinares y pastizales",
+            "2811A": "Pinar de pino silvestre y matorral de alta montaña",
+            "3319D": "Pinar de pino silvestre y matorral",
+            "3268C": "Robledal de melojo y encinares",
+            "3343Y": "Encinares y pastizales",
+        }
 
         resultado.append({
             "id": e["indicativo"],
@@ -88,12 +106,13 @@ def _cargar_estaciones(provincias=("MADRID", "SEGOVIA", "AVILA"), altitud_min=80
             "lat": lat,
             "lon": lon,
             "provincia": prov.title(),
+            "bosque": BOSQUES.get(e["indicativo"], "Bosque mediterráneo / mixto"),
         })
 
     # Ordenar por altitud descendente (las más altas primero)
     resultado.sort(key=lambda x: x["altitud"], reverse=True)
     print(f"✅ Cargadas {len(resultado)} estaciones de Madrid, Segovia y Ávila (> {altitud_min} m)")
-    resutlado = resultado[:15]  # Limitar a las 10 más altas
+    #resutlado = resultado[:15]  # Limitar a las 15 más altas
     return resultado
 
 
@@ -143,6 +162,33 @@ def cache_get(clave):
 
 def cache_set(clave, valor):
     _cache[clave] = {"valor": valor, "expira": time.time() + CACHE_TTL}
+    
+import json
+import os
+from pathlib import Path
+
+# Archivo donde se guardan los datos de las estaciones
+CACHE_FILE = Path(__file__).resolve().parent / "cache_estaciones.json"
+
+
+def _leer_cache_disco():
+    """Lee el JSON de caché. Devuelve dict vacío si no existe o está corrupto."""
+    if not CACHE_FILE.exists():
+        return {}
+    try:
+        with open(CACHE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _guardar_cache_disco(cache):
+    """Guarda el dict de caché en el JSON."""
+    try:
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, ensure_ascii=False, indent=2)
+    except OSError as exc:
+        print(f"[WARN] No se pudo guardar la caché: {exc}")
     
 # ---------------------------------------------------------------------------
 # Catálogo de especies y baremo continuo
@@ -315,26 +361,36 @@ ESPECIES = [
 
 # OBTENER METEO SIERRA DE MADRID
 
-def _meteo_una_estacion(estacion_id):
-    """Devuelve (lluvia_30d, temp_actual) para una estación, o None si falla."""
+def _meteo_una_estacion(estacion_id, forzar=False):
+    """
+    Devuelve (lluvia_30d, temp_actual) para una estación.
+    Usa caché en disco con TTL de 30 min. Si AEMET falla, usa el dato
+    guardado aunque sea viejo (para no dejar la web vacía).
+    """
+    cache_disco = _leer_cache_disco()
+    entrada = cache_disco.get(estacion_id)
+
+    # Si hay dato reciente y no se fuerza, devolverlo
+    if entrada and not forzar:
+        edad = time.time() - entrada.get("timestamp", 0)
+        if edad < CACHE_TTL:
+            return (entrada["lluvia"], entrada["temp"])
+
     try:
-        # Temperatura actual
+        # --- 1) Temperatura actual ---
         url_obs = f"{BASE}/observacion/convencional/datos/estacion/{estacion_id}"
         obs = _aemet_datos(url_obs)
         if not obs:
-            return None
+            raise RuntimeError("Sin observaciones recientes")
         ultima = max(obs, key=lambda x: x.get("fint", ""))
         temp = ultima.get("ta")
         if temp is None:
-            return None
+            raise RuntimeError("Sin temperatura")
         if isinstance(temp, str):
             temp = temp.replace(",", ".")
-        try:
-            temp = float(temp)
-        except (ValueError, TypeError):
-            return None
+        temp = float(temp)
 
-        # Lluvia 30 días
+        # --- 2) Lluvia 30 días ---
         hoy = date.today()
         hace_30 = hoy - timedelta(days=30)
         f_ini = f"{hace_30.isoformat()}T00%3A00%3A00UTC"
@@ -360,53 +416,81 @@ def _meteo_una_estacion(estacion_id):
             except (ValueError, TypeError):
                 continue
 
+        # Guardar en disco
+        cache_disco[estacion_id] = {
+            "lluvia": lluvia,
+            "temp": temp,
+            "timestamp": time.time(),
+        }
+        _guardar_cache_disco(cache_disco)
         return (lluvia, temp)
+
     except Exception as exc:
-        print(f"[ERROR] {estacion_id}: {type(exc).__name__}: {exc}") #AGT
+        print(f"[ERROR] {estacion_id}: {type(exc).__name__}: {exc}")
+        # Si falla AEMET pero hay dato viejo, usarlo
+        if entrada:
+            print(f"[FALLBACK] Usando dato antiguo para {estacion_id}")
+            return (entrada["lluvia"], entrada["temp"])
         return None
 
 
-def obtener_datos_por_estacion(provincia=None):
+def obtener_datos_por_estacion(provincia=None, forzar=False):
     clave = f"meteo:por_estacion:{provincia or 'todas'}"
     cacheado = cache_get(clave)
-    if cacheado is not None:
+    if cacheado is not None and not forzar:
         return cacheado
-
-    print(f"[FILTRO] provincia = {provincia!r}")
 
     estaciones_filtradas = [
         est for est in ESTACIONES
         if provincia is None or est["provincia"].upper() == provincia.upper()
     ]
-    print(f"[FILTRO] estaciones a consultar: {len(estaciones_filtradas)}")
+
+    # --- NUEVO: ordenar por caché ---
+    cache_disco = _leer_cache_disco()
+    estaciones_filtradas.sort(
+        key=lambda e: 0 if e["id"] in cache_disco else 1
+    )
+    # --------------------------------
+
+    print(f"[INFO] Consultando {len(estaciones_filtradas)} estaciones...")
 
     resultados = []
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        futuros = {
-            executor.submit(_meteo_una_estacion, est["id"]): est
-            for est in estaciones_filtradas
-        }
-        for futuro in as_completed(futuros):
-            est = futuros[futuro]
-            datos = futuro.result()
+    for est in estaciones_filtradas:
+        # Si ya está en caché reciente, lo usamos directamente
+        entrada = cache_disco.get(est["id"])
+        if entrada and (time.time() - entrada.get("timestamp", 0)) < CACHE_TTL:
+            lluvia, temp = entrada["lluvia"], entrada["temp"]
+        else:
+            # No está o está viejo: pedimos a AEMET con una pequeña pausa
+            time.sleep(1.0)  # Pausa de 1 segundo entre peticiones nuevas
+            datos = _meteo_una_estacion(est["id"])
             if datos is None:
                 print(f"[FALLO] {est['nombre']}")
-                continue
-            lluvia, temp = datos
-            resultados.append({
-                "estacion": est["nombre"],
-                "altitud": est["altitud"],
-                "lat": est["lat"],
-                "lon": est["lon"],
-                "provincia": est["provincia"],
-                "lluvia": round(lluvia, 1),
-                "temp": round(temp, 1),
-                "favorables": puntuar_especies(lluvia, temp),
-            })
+                # Si falla pero hay dato viejo, usamos el viejo
+                if entrada:
+                    lluvia, temp = entrada["lluvia"], entrada["temp"]
+                    print(f"[FALLBACK] Usando dato antiguo para {est['nombre']}")
+                else:
+                    continue  # Si no hay ni dato viejo, saltamos
+            else:
+                lluvia, temp = datos
+
+        # Construimos el resultado
+        resultados.append({
+            "estacion": est["nombre"],
+            "altitud": est["altitud"],
+            "lat": est["lat"],
+            "lon": est["lon"],
+            "provincia": est["provincia"],
+            "bosque": est["bosque"],
+            "lluvia": round(lluvia, 1),
+            "temp": round(temp, 1),
+            "favorables": puntuar_especies(lluvia, temp),
+        })
 
     if not resultados:
-        raise RuntimeError(f"Ninguna estación devolvió datos (provincia: {provincia or 'todas'})")
+        raise RuntimeError("Ninguna estación devolvió datos")
 
     def _mejor_puntaje(z):
         return z["favorables"][0][0] if z["favorables"] else -1
@@ -414,6 +498,7 @@ def obtener_datos_por_estacion(provincia=None):
     resultados.sort(key=_mejor_puntaje, reverse=True)
     cache_set(clave, resultados)
     return resultados
+
 
 # ---------------------------------------------------------------------------
 # Baremo
@@ -482,6 +567,8 @@ def calcular_resumen(zonas):
 @app.route("/")
 def inicio():
     provincia = request.args.get("provincia")
+    if provincia and provincia.upper() == "TODAS":
+        provincia = None
     try:
         zonas = obtener_datos_por_estacion(provincia)
     except Exception as exc:
@@ -513,8 +600,10 @@ def contacto():
 
 @app.route("/recargar")
 def recargar():
-    """Vacía la caché y vuelve al inicio con datos frescos."""
     _cache.clear()
+    # Borrar también la caché de disco para forzar datos frescos
+    if CACHE_FILE.exists():
+        CACHE_FILE.unlink()
     return redirect(url_for("inicio"))
 
 @app.route("/especie/<slug>")

@@ -26,3 +26,6 @@ run.bat
 
 # Si no quieres versionar las imágenes
 static/img/
+
+# Caché local
+cache_estaciones.json
