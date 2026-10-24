@@ -4,101 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ especie.nombre }} · 🍄 MicoMadrid</title>
-    <style>
-        body {
-            font-family: system-ui, sans-serif;
-            max-width: 700px;
-            margin: 40px auto;
-            padding: 0 20px;
-            color: #333;
-            background: #f7f5ef;
-        }
-
-        h1 {
-            color: #6b4b2a;
-            margin-bottom: 4px;
-        }
-
-        header {
-            border-bottom: 2px solid #e0d6c3;
-            padding-bottom: 12px;
-            margin-bottom: 24px;
-        }
-
-        nav a {
-            color: #6b4b2a;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
-
-        .cientifico {
-            font-style: italic;
-            color: #888;
-            margin-bottom: 16px;
-        }
-
-        .foto {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
-
-        .campo {
-            display: flex;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .campo:last-child {
-            border-bottom: none;
-        }
-
-        .campo-etiqueta {
-            font-weight: bold;
-            color: #6b4b2a;
-            min-width: 140px;
-        }
-
-        .aviso {
-            font-size: 0.85em;
-            color: #888;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        footer {
-            border-top: 1px solid #e0d6c3;
-            padding-top: 16px;
-            margin-top: 40px;
-        }
-
-        .volver {
-            display: inline-block;
-            margin-top: 16px;
-            color: #6b4b2a;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .volver:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>🍄 MicoMadrid</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <!-- Opcional: Leaflet solo en index.html -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>

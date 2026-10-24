@@ -115,18 +115,8 @@ def _cargar_estaciones(provincias=("MADRID", "SEGOVIA", "AVILA"), altitud_min=80
     #resutlado = resultado[:15]  # Limitar a las 15 más altas
     return resultado
 
-
-
 ESTACIONES = _cargar_estaciones()
 
-# # Estaciones de la Sierra de Madrid (altitud >= 1000 m)
-# ESTACIONES = [
-#     {"id": "2462",  "nombre": "Puerto de Navacerrada", "altitud": 1892},
-#     {"id": "3266A", "nombre": "Puerto Alto del León",  "altitud": 1530},
-#     {"id": "3111D", "nombre": "Somosierra",            "altitud": 1454},
-#     {"id": "3104Y", "nombre": "Rascafría",             "altitud": 1159},
-#     {"id": "3110C", "nombre": "Buitrago del Lozoya",   "altitud": 1030},
-# ]
 
 # ---------------------------------------------------------------------------
 # Configuración AEMET
@@ -135,16 +125,6 @@ AEMET_KEY = os.environ.get("AEMET_KEY", "")
 if not AEMET_KEY:
     print("⚠️  AEMET_KEY no definida. Crea un .env con AEMET_KEY=tu_clave")
 
-# BASE = "https://opendata.aemet.es/opendata/api"
-
-# Estaciones de la Sierra de Madrid (altitud >= 1000 m)
-# ESTACIONES = [
-#     {"id": "2462",  "nombre": "Puerto de Navacerrada", "altitud": 1892, "lat": 40.7808, "lon": -4.0103},
-#     {"id": "3266A", "nombre": "Puerto Alto del León",  "altitud": 1530, "lat": 40.6583, "lon": -4.1167},
-#     {"id": "3111D", "nombre": "Somosierra",            "altitud": 1454, "lat": 41.1333, "lon": -3.5833},
-#     {"id": "3104Y", "nombre": "Rascafría",             "altitud": 1159, "lat": 40.9000, "lon": -3.8833},
-#     {"id": "3110C", "nombre": "Buitrago del Lozoya",   "altitud": 1030, "lat": 40.9833, "lon": -3.6333},
-# ]
 
 # ---------------------------------------------------------------------------
 # Caché simple en memoria (TTL 30 min)
@@ -617,6 +597,10 @@ def especie(slug):
 def especies():
     return render_template("especies.html", especies=ESPECIES)
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)
     
+    
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
