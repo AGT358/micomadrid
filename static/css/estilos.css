@@ -351,3 +351,24 @@ footer {
     padding: 12px;
     border-radius: 6px;
 }
+
+
+@media (max-width: 600px) {
+    body {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+    .filtros {
+        justify-content: center;
+    }
+    .especie {
+        grid-template-columns: 1fr 80px 60px; /* Barra más corta */
+        gap: 6px;
+    }
+    h2 {
+        font-size: 1.1em;
+    }
+    #mapa {
+        height: 300px !important; /* Mapa más bajo en móvil */
+    }
+}
